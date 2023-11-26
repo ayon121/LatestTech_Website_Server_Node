@@ -28,9 +28,27 @@ async function run() {
     // databases
     const database = client.db("TechProducts");
     const featuredcollections = database.collection("Featured");
-    const allproductscollections = database.collection("AllProducts");
+    const allproductscollections = database.collection("allproducts");
+    const usercollections = database.collection("users");
 
     ///// routes/////
+    // user function
+    app.post('/users' , async(req , res) =>  {
+      const user = req.body
+      const query = {email : user.email}
+      const existingUser = await usercollections.findOne(query)
+      if(existingUser){
+        return res.send({message : 'user already exist' , insertedId : null})
+      }
+      const result = await usercollections.insertOne(user)
+      res.send(result)
+    })
+    app.get('/users' , async(req , res) => {
+      const cursor = usercollections.find()
+      const result = await cursor.toArray();
+      res.send(result)
+
+    })
     // featured products get func
     app.get('/featured' , async(req , res) => {
         const cursor= featuredcollections.find()
