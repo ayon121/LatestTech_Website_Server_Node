@@ -9,7 +9,7 @@ const cors = require('cors');
 app.use(cors())
 app.use(express.json())
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.6rjuyq3.mongodb.net/?retryWrites=true&w=majority`;
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
@@ -43,12 +43,48 @@ async function run() {
       const result = await usercollections.insertOne(user)
       res.send(result)
     })
+    // all users for admin
     app.get('/users' , async(req , res) => {
       const cursor = usercollections.find()
       const result = await cursor.toArray();
       res.send(result)
 
     })
+    //single user
+    app.get('/users/:id' , async(req ,res) => {
+      const email = req.params.id
+      const query = { email: email };
+      const user = await usercollections.find(query).toArray();
+      res.send(user)
+
+    })
+    // update user make admin
+    app.patch('/users/:id' , async(req , res ) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set : {
+          userRole : 'admin'
+        }
+      }
+      const result = await usercollections.updateOne(filter , updateDoc)
+      res.send(result)
+    })
+    // update user make modaretor
+    app.patch('/users/modaretor/:id' , async(req , res ) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = {_id : new ObjectId(id)}
+      const updateDoc = {
+        $set : {
+          userRole : 'modaretor'
+        }
+      }
+      const result = await usercollections.updateOne(filter , updateDoc)
+      res.send(result)
+    })
+
     // featured products get func
     app.get('/featured' , async(req , res) => {
         const cursor= featuredcollections.find()
