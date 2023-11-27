@@ -105,6 +105,11 @@ async function run() {
       const result = await reviewProductcollections.insertOne(product);
       res.send(result)
     })
+    app.get('/reviewproduct', async (req, res) => {
+      const cursor = reviewProductcollections.find()
+      const result = await cursor.toArray();
+      res.send(result)
+    })
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
