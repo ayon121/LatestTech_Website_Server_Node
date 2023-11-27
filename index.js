@@ -30,28 +30,29 @@ async function run() {
     const featuredcollections = database.collection("Featured");
     const allproductscollections = database.collection("allproducts");
     const usercollections = database.collection("users");
+    const reviewProductcollections = database.collection("reviewProducts");
 
     ///// routes/////
     // user function
-    app.post('/users' , async(req , res) =>  {
+    app.post('/users', async (req, res) => {
       const user = req.body
-      const query = {email : user.email}
+      const query = { email: user.email }
       const existingUser = await usercollections.findOne(query)
-      if(existingUser){
-        return res.send({message : 'user already exist' , insertedId : null})
+      if (existingUser) {
+        return res.send({ message: 'user already exist', insertedId: null })
       }
       const result = await usercollections.insertOne(user)
       res.send(result)
     })
     // all users for admin
-    app.get('/users' , async(req , res) => {
+    app.get('/users', async (req, res) => {
       const cursor = usercollections.find()
       const result = await cursor.toArray();
       res.send(result)
 
     })
     //single user
-    app.get('/users/:id' , async(req ,res) => {
+    app.get('/users/:id', async (req, res) => {
       const email = req.params.id
       const query = { email: email };
       const user = await usercollections.find(query).toArray();
@@ -59,44 +60,52 @@ async function run() {
 
     })
     // update user make admin
-    app.patch('/users/:id' , async(req , res ) => {
+    app.patch('/users/:id', async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const filter = {_id : new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) }
       const updateDoc = {
-        $set : {
-          userRole : 'admin'
+        $set: {
+          userRole: 'admin'
         }
       }
-      const result = await usercollections.updateOne(filter , updateDoc)
+      const result = await usercollections.updateOne(filter, updateDoc)
       res.send(result)
     })
     // update user make modaretor
-    app.patch('/users/modaretor/:id' , async(req , res ) => {
+    app.patch('/users/modaretor/:id', async (req, res) => {
       const id = req.params.id;
       console.log(id);
-      const filter = {_id : new ObjectId(id)}
+      const filter = { _id: new ObjectId(id) }
       const updateDoc = {
-        $set : {
-          userRole : 'modaretor'
+        $set: {
+          userRole: 'modaretor'
         }
       }
-      const result = await usercollections.updateOne(filter , updateDoc)
+      const result = await usercollections.updateOne(filter, updateDoc)
       res.send(result)
     })
 
     // featured products get func
-    app.get('/featured' , async(req , res) => {
-        const cursor= featuredcollections.find()
-        const result = await cursor.toArray();
-        res.send(result)
+    app.get('/featured', async (req, res) => {
+      const cursor = featuredcollections.find()
+      const result = await cursor.toArray();
+      res.send(result)
     })
     // all products
-    app.get('/allproducts' ,  async(req , res) => {
-        const cursor= allproductscollections.find()
-        const result = await cursor.toArray();
-        res.send(result)
+    app.get('/allproducts', async (req, res) => {
+      const cursor = allproductscollections.find()
+      const result = await cursor.toArray();
+      res.send(result)
     })
+
+    // products for review
+    app.post('/reviewproduct', async (req, res) => {
+      const product = req.body;
+      const result = await reviewProductcollections.insertOne(product);
+      res.send(result)
+    })
+
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
