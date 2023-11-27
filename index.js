@@ -117,6 +117,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+    // approved
     app.patch('/reviewproduct/:id',async(req , res) => {
       const id = req.params.id;
       console.log(id);
@@ -129,6 +130,7 @@ async function run() {
       const result = await reviewProductcollections.updateOne(filter, updateDoc)
       res.send(result)
     } )
+    // reject
     app.patch('/reviewproduct/reject/:id',async(req , res) => {
       const id = req.params.id;
       console.log(id);
@@ -141,6 +143,14 @@ async function run() {
       const result = await reviewProductcollections.updateOne(filter, updateDoc)
       res.send(result)
     } )
+    // myproducts
+    app.get('/reviewproduct/:id', async (req, res) => {
+      const email = req.params.id
+      const query = { user_email: email };
+      const products = await reviewProductcollections.find(query).toArray();
+      res.send(products)
+    })
+
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
