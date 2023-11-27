@@ -30,7 +30,7 @@ async function run() {
     const featuredcollections = database.collection("Featured");
     const allproductscollections = database.collection("allproducts");
     const usercollections = database.collection("users");
-    const reviewProductcollections = database.collection("reviewProducts");
+    const reviewProductcollections = database.collection("AllReviewProducts");
 
     ///// routes/////
     // user function
@@ -98,6 +98,13 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+    app.post('/allproducts' , async(req ,res) => {
+      const product = req.body;
+      const result = await allproductscollections.insertOne(product);
+      res.send(result)
+
+    })
+   
 
     // products for review
     app.post('/reviewproduct', async (req, res) => {
@@ -110,6 +117,18 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+    app.patch('/reviewproduct/:id',async(req , res) => {
+      const id = req.params.id;
+      console.log(id);
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $set: {
+          status: 'Approved'
+        }
+      }
+      const result = await reviewProductcollections.updateOne(filter, updateDoc)
+      res.send(result)
+    } )
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
