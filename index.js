@@ -110,7 +110,7 @@ async function run() {
     // update user make paid
     app.patch('/users/paid/:id', async (req, res) => {
       const id = req.params.id;
-      console.log(id);
+      
       const filter = { _id: new ObjectId(id) }
       const updateDoc = {
         $set: {
@@ -127,6 +127,12 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result)
     })
+    app.post('/featured', async (req, res) =>{
+      const product = req.body;
+      const result = await featuredcollections.insertOne(product);
+      res.send(result)
+
+    })
     // all products
     app.get('/allproducts', async (req, res) => {
       const cursor = allproductscollections.find()
@@ -139,6 +145,14 @@ async function run() {
       res.send(result)
 
     })
+    // all product details
+    app.get('/allproduct/:id', async (req, res) => {
+      const id = req.params.id;
+      const query = {_id: new ObjectId(id) };
+      const result = await  allproductscollections.findOne(query)
+      res.send(result)
+    })
+
    
 
     // products for review
