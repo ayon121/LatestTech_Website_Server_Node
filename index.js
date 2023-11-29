@@ -152,6 +152,18 @@ async function run() {
       const result = await  allproductscollections.findOne(query)
       res.send(result)
     })
+    // all product upvote
+    app.patch('/allproduct/upvote/:id', async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $inc: {
+          total_upvote: 1
+        }
+      }
+      const result = await allproductscollections.updateOne(filter, updateDoc)
+      res.send(result)
+    })
 
    
 
