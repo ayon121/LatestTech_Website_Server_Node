@@ -133,6 +133,19 @@ async function run() {
       res.send(result)
 
     })
+    // featured upvote
+    app.patch('/featured/upvote/:id' , async (req, res) =>{ 
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) }
+      const updateDoc = {
+        $inc: {
+          total_upvote: 1
+        }
+      }
+      const result = await featuredcollections.updateOne(filter, updateDoc)
+      res.send(result)
+
+    })
     // all products
     app.get('/allproducts', async (req, res) => {
       const cursor = allproductscollections.find()
