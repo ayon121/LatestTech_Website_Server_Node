@@ -148,9 +148,17 @@ async function run() {
     })
     // all products
     app.get('/allproducts', async (req, res) => {
+      const page = parseInt(req.query.page)
+      const size = parseInt(req.query.size)
+      
+      
       const cursor = allproductscollections.find()
-      const result = await cursor.toArray();
+      const result = await cursor.skip(page * size).limit(size).toArray();
       res.send(result)
+    })
+    app.get('/allporductCount' ,  async (req, res) => {
+      const count = await allproductscollections.estimatedDocumentCount()
+      res.send({count})
     })
     app.post('/allproducts' , async(req ,res) => {
       const product = req.body;
