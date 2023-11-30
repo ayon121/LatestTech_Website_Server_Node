@@ -31,6 +31,7 @@ async function run() {
     const allproductscollections = database.collection("allproducts");
     const usercollections = database.collection("users");
     const reviewProductcollections = database.collection("AllReviewProducts");
+    const ProductReviewcollections = database.collection("AllProductsReview");
 
     ///// routes/////
     //payment
@@ -156,6 +157,13 @@ async function run() {
       const result = await cursor.skip(page * size).limit(size).toArray();
       res.send(result)
     })
+    // all trendings
+    app.get('/trendings', async (req, res) => {
+    
+      const cursor = allproductscollections.find()
+      const result = await cursor.limit(4).toArray();
+      res.send(result)
+    })
     app.get('/allporductCount' ,  async (req, res) => {
       const count = await allproductscollections.estimatedDocumentCount()
       res.send({count})
@@ -186,7 +194,21 @@ async function run() {
       res.send(result)
     })
 
-   
+  
+    // product review added//
+    app.post('/addproductreview', async (req, res) => {
+      const product = req.body;
+      const result = await ProductReviewcollections.insertOne(product);
+      res.send(result)
+    })
+    app.get('/addproductreview/:id' ,async (req , res) => {
+      const productId = req.params.id
+      const query = { productId: productId };
+      const user = await ProductReviewcollections.find(query).toArray();
+      res.send(user)
+    })
+
+
 
     // products for review
     app.post('/reviewproduct', async (req, res) => {
